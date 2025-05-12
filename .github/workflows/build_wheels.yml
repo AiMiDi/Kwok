@@ -40,6 +40,7 @@ jobs:
         with:
           path: ./wheelhouse/*.whl
           name: wheels
+          overwrite: true
           
   build_sdist:
     name: Build source distribution
@@ -64,6 +65,7 @@ jobs:
         with:
           path: dist/*.tar.gz
           name: sdist
+          overwrite: true
           
   publish:
     name: Publish to PyPI
