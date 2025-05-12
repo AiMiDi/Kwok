@@ -45,9 +45,13 @@ class BuildExt(build_ext):
         if compiler == 'msvc':  # Windows (Visual Studio)
             for e in self.extensions:
                 e.extra_compile_args = ['/O2', '/std:c++14']
-        else:  # Assuming GCC/Clang (Linux, macOS)
+        elif compiler == 'unix':  # Assuming GCC/Clang (Linux, macOS)
             for e in self.extensions:
-                e.extra_compile_args = ['-O3', '-std=c++14', '-march=native', '-ffast-math']
+                # Check if the compiler is Clang
+                if 'clang' in self.compiler.compiler[0]:
+                    e.extra_compile_args = ['-O3', '-std=c++14', '-ffast-math']
+                else:  # GCC
+                    e.extra_compile_args = ['-O3', '-std=c++14', '-march=native', '-ffast-math']
         
         build_ext.build_extensions(self)
 
