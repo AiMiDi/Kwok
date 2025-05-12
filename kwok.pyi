@@ -1,4 +1,4 @@
-from typing import List, Tuple, Any
+from typing import List, Tuple
 
 class Matching:
     left_pairs: List[int] # Maps L vertices to their matched R vertices (-1 if unmatched)
@@ -7,15 +7,15 @@ class Matching:
 
 def kwok(L: int, R: int, adj: List[List[Tuple[int, int|float]]]) -> Matching:
     """
-    Find maximum weight matching in a bipartite graph.
-    
+    Computes the maximum weight matching with runtime O(E^1.4 + LR) estimated from experimental tests 
+    on random graphs where |L| <= |R|. For more details, see https://arxiv.org/abs/2502.20889.
+
     Args:
-        L: Number of vertices in the left part
-        R: Number of vertices in the right part
-        adj: Adjacency list where adj[i] contains edges (j, weight) for vertex i in left part
-             and j in right part
-             
-    Returns:
-        Matching object with total_weight and matching attributes
+        L_size: Number of vertices in left partition (L)
+        R_size: Number of vertices in right partition (R)
+        adj: Adjacency list where each element is a list of (vertex, weight) tuples representing 
+             edges from a vertex in L to vertices in R.
+
+    Note that integer weights are not required, whereas it could probably accelerate the algorithm.
     """
     ...

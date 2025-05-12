@@ -464,7 +464,19 @@ cdef void kwok_double(int L_size, int R_size, list adj, vector[int]& left_pairs,
 
 # Python wrapper function
 def kwok(int L_size, int R_size, list adj):
-    # Check if weights are integers or doubles
+    """
+    Implements "A Faster Algorithm for Maximum Weight Matching on Unrestricted Bipartite Graphs"
+    with runtime O(E^1.4 + LR) estimated from experimental tests on random graphs where |L| <= |R|.
+    For more details, see https://arxiv.org/abs/2502.20889.
+
+    Args:
+        L_size: Number of vertices in left partition (L)
+        R_size: Number of vertices in right partition (R)
+        adj: Adjacency list where each element is a list of (vertex, weight) tuples representing 
+             edges from a vertex in L to vertices in R.
+
+    Note that integer weights are not required, whereas it could probably accelerate the algorithm.
+    """
     cdef bool is_double = False
     
     if L_size > 0 and len(adj) > 0 and len(adj[0]) > 0:

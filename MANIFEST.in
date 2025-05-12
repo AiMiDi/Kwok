@@ -1,0 +1,6 @@
+include README.md
+include LICENSE
+include pyproject.toml
+include kwok.pyx
+include *.pyd
+recursive-include kwok *.pyd
