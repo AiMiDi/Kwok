@@ -6,9 +6,6 @@ from libcpp cimport bool
 from dataclasses import dataclass
 from typing import List
 
-import sys
-sys.stdout.reconfigure(encoding='utf-8')
-
 @dataclass
 class Matching:
     left_pairs: List[int] # Maps L vertices to their matched R vertices (-1 if unmatched)
