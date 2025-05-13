@@ -6,8 +6,6 @@ A Cython-based implementation of "A Faster Algorithm for Maximum Weight Matching
 
 Kwok implements a fast maximum weight bipartite matching algorithm based on the paper "A Faster Algorithm for Maximum Weight Matching on Unrestricted Bipartite Graphs" (https://arxiv.org/abs/2502.20889). The algorithm achieves runtime O(E^1.4 + LR) estimated from experimental tests on random graphs where |L| <= |R|.
 
-The algorithm is particularly efficient for dense graphs and outperforms traditional implementations of the Hungarian algorithm in many practical scenarios.
-
 ## Installation
 
 ```bash
@@ -37,14 +35,15 @@ print("Total weight:", matching.total_weight)
 
 ### API Reference
 
-#### kwok(L_size, R_size, adj)
+#### kwok(l_size, r_size, adj, keeps_virtual_matching)
 
 Computes the maximum weight matching in a bipartite graph.
 
 **Parameters:**
-- `L_size` (int): Number of vertices in left partition (L)
-- `R_size` (int): Number of vertices in right partition (R)
+- `l_size` (int): Number of vertices in left partition (L)
+- `r_size` (int): Number of vertices in right partition (R)
 - `adj` (list): Adjacency list where each element is a list of (vertex, weight) tuples representing edges from a vertex in L to vertices in R
+- `keeps_virtual_matching` (bool) : The algorithm's output is mathematically equivalent to the solution obtained by computing matches on a complete bipartite graph augmented with zero-weight virtual edges. However, for computational efficiency, the implementation operates directly on the original sparse graph structure. When the keeps_virtual_matching parameter is disabled (false), the algorithm automatically filters out any zero-weight matches from the final results.
 
 **Returns:**
 - `Matching`: A dataclass with the following attributes:

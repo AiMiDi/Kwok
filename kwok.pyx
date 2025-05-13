@@ -215,7 +215,7 @@ cdef void kwok_bfs_double(int first_unmatched_r, vector[int]& right_parents, vec
 @cython.wraparound(False)
 @cython.cdivision(True)
 @cython.nonecheck(False)
-cdef void kwok_int(int L_size, int R_size, list adj, vector[int]& left_pairs, vector[int]& right_pairs, int& total) noexcept nogil:
+cdef void kwok_int(int L_size, int R_size, list adj, bool keeps_virtual_matching, vector[int]& left_pairs, vector[int]& right_pairs, int& total) noexcept nogil:
     cdef vector[int] right_parents
     cdef vector[bool] right_visited
     cdef vector[bool] right_on_edge
@@ -333,7 +333,7 @@ cdef void kwok_int(int L_size, int R_size, list adj, vector[int]& left_pairs, ve
                     break
             
             # Remove virtual matching
-            if not matched:
+            if not keeps_virtual_matching and matched:
                 left_pairs[l] = -1
                 right_pairs[r] = -1
 
@@ -341,7 +341,7 @@ cdef void kwok_int(int L_size, int R_size, list adj, vector[int]& left_pairs, ve
 @cython.wraparound(False)
 @cython.cdivision(True)
 @cython.nonecheck(False)
-cdef void kwok_double(int L_size, int R_size, list adj, vector[int]& left_pairs, vector[int]& right_pairs, double& total) noexcept nogil:
+cdef void kwok_double(int L_size, int R_size, list adj, bool keeps_virtual_matching, vector[int]& left_pairs, vector[int]& right_pairs, double& total) noexcept nogil:
     cdef vector[int] right_parents
     cdef vector[bool] right_visited
     cdef vector[bool] right_on_edge
@@ -458,45 +458,46 @@ cdef void kwok_double(int L_size, int R_size, list adj, vector[int]& left_pairs,
                     break
             
             # Remove virtual matching
-            if not matched:
+            if not keeps_virtual_matching and matched:
                 left_pairs[l] = -1
                 right_pairs[r] = -1
 
 # Python wrapper function
-def kwok(int L_size, int R_size, list adj):
+def kwok(int l_size, int r_size, list adj, bool keeps_virtual_matching = False):
     """
     Implements "A Faster Algorithm for Maximum Weight Matching on Unrestricted Bipartite Graphs"
     with runtime O(E^1.4 + LR) estimated from experimental tests on random graphs where |L| <= |R|.
     For more details, see https://arxiv.org/abs/2502.20889.
 
     Args:
-        L_size: Number of vertices in left partition (L)
-        R_size: Number of vertices in right partition (R)
+        l_size: Number of vertices in left partition (L)
+        r_size: Number of vertices in right partition (R)
         adj: Adjacency list where each element is a list of (vertex, weight) tuples representing 
              edges from a vertex in L to vertices in R.
+        keeps_virtual_matching: The algorithm's output is mathematically equivalent to the solution obtained by computing matches on a complete bipartite graph augmented with zero-weight virtual edges. However, for computational efficiency, the implementation operates directly on the original sparse graph structure. When the keeps_virtual_matching parameter is disabled (false), the algorithm automatically filters out any zero-weight matches from the final results.
 
     Note that integer weights are not required, whereas it could probably accelerate the algorithm.
     """
     cdef bool is_double = False
     
-    if L_size > 0 and len(adj) > 0 and len(adj[0]) > 0:
+    if l_size > 0 and len(adj) > 0 and len(adj[0]) > 0:
         for edge in adj[0]:
             if isinstance(edge[1], float) and not edge[1].is_integer():
                 is_double = True
                 break
     
-    cdef vector[int] left_pairs = vector[int](L_size, -1)
-    cdef vector[int] right_pairs = vector[int](R_size, -1)
+    cdef vector[int] left_pairs = vector[int](l_size, -1)
+    cdef vector[int] right_pairs = vector[int](r_size, -1)
     cdef int total_int = 0
     cdef double total_double = 0.0
     
     if is_double:
         with nogil:
-            kwok_double(L_size, R_size, adj, left_pairs, right_pairs, total_double)
+            kwok_double(l_size, r_size, adj, keeps_virtual_matching, left_pairs, right_pairs, total_double)
         
         # Convert C++ vectors to Python lists
-        left_pairs_py = [left_pairs[i] for i in range(L_size)]
-        right_pairs_py = [right_pairs[i] for i in range(R_size)]
+        left_pairs_py = [left_pairs[i] for i in range(l_size)]
+        right_pairs_py = [right_pairs[i] for i in range(r_size)]
 
         return Matching(
             left_pairs=left_pairs_py,
@@ -505,11 +506,11 @@ def kwok(int L_size, int R_size, list adj):
         )
     else:
         with nogil:
-            kwok_int(L_size, R_size, adj, left_pairs, right_pairs, total_int)
+            kwok_int(l_size, r_size, adj, keeps_virtual_matching, left_pairs, right_pairs, total_int)
         
         # Convert C++ vectors to Python lists
-        left_pairs_py = [left_pairs[i] for i in range(L_size)]
-        right_pairs_py = [right_pairs[i] for i in range(R_size)]
+        left_pairs_py = [left_pairs[i] for i in range(l_size)]
+        right_pairs_py = [right_pairs[i] for i in range(r_size)]
 
         return Matching(
             left_pairs=left_pairs_py,

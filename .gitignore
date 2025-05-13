@@ -1,0 +1,6 @@
+﻿*.cpp
+*.pyd
+.venv
+*.egg-info
+__pycache__
+.idea/
