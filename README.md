@@ -18,8 +18,6 @@ pip install kwok
 import kwok
 
 # Example usage
-L_size = 3  # Number of vertices in left partition
-R_size = 3  # Number of vertices in right partition
 adj = [
     [(0, 10), (1, 5), (2, 1)],  # Edges from left vertex 0
     [(0, 2), (1, 15), (2, 0)],  # Edges from left vertex 1
@@ -27,7 +25,7 @@ adj = [
 ]
 
 # Solve the matching problem
-matching = kwok.kwok(L_size, R_size, adj)
+matching = kwok.kwok(adj)
 print("Left pairs:", matching.left_pairs)
 print("Right pairs:", matching.right_pairs)
 print("Total weight:", matching.total_weight)
@@ -35,15 +33,13 @@ print("Total weight:", matching.total_weight)
 
 ### API Reference
 
-#### kwok(l_size, r_size, adj, keeps_virtual_matching)
+#### kwok(adj, keeps_virtual_matching)
 
 Computes the maximum weight matching in a bipartite graph.
 
 **Parameters:**
-- `l_size` (int): Number of vertices in left partition (L)
-- `r_size` (int): Number of vertices in right partition (R)
-- `adj` (list): Adjacency list where each element is a list of (vertex, weight) tuples representing edges from a vertex in L to vertices in R
-- `keeps_virtual_matching` (bool) : The algorithm's output is mathematically equivalent to the solution obtained by computing matches on a complete bipartite graph augmented with zero-weight virtual edges. However, for computational efficiency, the implementation operates directly on the original sparse graph structure. When the keeps_virtual_matching parameter is disabled (false), the algorithm automatically filters out any zero-weight matches from the final results.
+- `adj` (list): Adjacency list where each element is a list of (vertex, weight) tuples representing edges from a vertex in L to vertices in R. Note that |L| <= |R| is required.
+- `keeps_virtual_matching` (bool) : Default is true. The algorithm's output is mathematically equivalent to the solution obtained by computing matches on a complete bipartite graph augmented with zero-weight virtual edges. However, for computational efficiency, the implementation operates directly on the original sparse graph structure. When the keeps_virtual_matching parameter is disabled (false), the algorithm automatically filters out any zero-weight matches from the final results.
 
 **Returns:**
 - `Matching`: A dataclass with the following attributes:

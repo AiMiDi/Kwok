@@ -12,11 +12,9 @@ def kwok(l_size: int, r_size: int, adj: List[List[Tuple[int, int | float]]], kee
     For more details, see https://arxiv.org/abs/2502.20889.
 
     Args:
-        l_size: Number of vertices in left partition (L)
-        r_size: Number of vertices in right partition (R)
         adj: Adjacency list where each element is a list of (vertex, weight) tuples representing
-             edges from a vertex in L to vertices in R.
-        keeps_virtual_matching(default = false): The algorithm's output is mathematically equivalent to the solution obtained by computing matches on a complete bipartite graph augmented with zero-weight virtual edges. However, for computational efficiency, the implementation operates directly on the original sparse graph structure. When the keeps_virtual_matching parameter is disabled (false), the algorithm automatically filters out any zero-weight matches from the final results.
+             edges from a vertex in L to vertices in R. Note that |L| <= |R| is required.
+        keeps_virtual_matching(default = true): The algorithm's output is mathematically equivalent to the solution obtained by computing matches on a complete bipartite graph augmented with zero-weight virtual edges. However, for computational efficiency, the implementation operates directly on the original sparse graph structure. When the keeps_virtual_matching parameter is disabled (false), the algorithm automatically filters out any zero-weight matches from the final results.
 
     Note that integer weights are not required, whereas it could probably accelerate the algorithm.
     """

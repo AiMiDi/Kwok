@@ -460,23 +460,27 @@ cdef void kwok_double(int L_size, int R_size, list adj, bool keeps_virtual_match
                 right_pairs[r] = -1
 
 # Python wrapper function
-def kwok(int l_size, int r_size, list adj, bool keeps_virtual_matching = False):
+def kwok(list adj, bool keeps_virtual_matching = True):
     """
     Implements "A Faster Algorithm for Maximum Weight Matching on Unrestricted Bipartite Graphs"
     with runtime O(E^1.4 + LR) estimated from experimental tests on random graphs where |L| <= |R|.
     For more details, see https://arxiv.org/abs/2502.20889.
 
     Args:
-        l_size: Number of vertices in left partition (L)
-        r_size: Number of vertices in right partition (R)
         adj: Adjacency list where each element is a list of (vertex, weight) tuples representing 
-             edges from a vertex in L to vertices in R.
-        keeps_virtual_matching(default = false): The algorithm's output is mathematically equivalent to the solution obtained by computing matches on a complete bipartite graph augmented with zero-weight virtual edges. However, for computational efficiency, the implementation operates directly on the original sparse graph structure. When the keeps_virtual_matching parameter is disabled (false), the algorithm automatically filters out any zero-weight matches from the final results.
+             edges from a vertex in L to vertices in R. Note that |L| <= |R| is required.
+        keeps_virtual_matching(default = true): The algorithm's output is mathematically equivalent to the solution obtained by computing matches on a complete bipartite graph augmented with zero-weight virtual edges. However, for computational efficiency, the implementation operates directly on the original sparse graph structure. When the keeps_virtual_matching parameter is disabled (false), the algorithm automatically filters out any zero-weight matches from the final results.
 
     Note that integer weights are not required, whereas it could probably accelerate the algorithm.
     """
     cdef bool is_double = False
-    
+    cdef int l_size = len(adj)
+    cdef int r_size = max([max([edge[0] for edge in adj[l]]) if len(adj[l]) > 0 else 0 for l in range(l_size)]) + 1
+
+    if l_size > r_size:
+        print("The left side must not contain more vertices than the right side.")
+        return None
+
     if l_size > 0 and len(adj) > 0 and len(adj[0]) > 0:
         for edge in adj[0]:
             if isinstance(edge[1], float) and not edge[1].is_integer():
