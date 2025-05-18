@@ -322,17 +322,16 @@ cdef void kwok_int(int L_size, int R_size, list adj, bool keeps_virtual_matching
     for l in range(L_size):
         matched = False
         r = left_pairs[l]
-        if r != -1:
-            for i in range(adj_cpp[l].size()):
-                if adj_cpp[l][i].vertex == r:
-                    total += adj_cpp[l][i].weight
-                    matched = True
-                    break
-            
-            # Remove virtual matching
-            if not keeps_virtual_matching and matched:
-                left_pairs[l] = -1
-                right_pairs[r] = -1
+        for i in range(adj_cpp[l].size()):
+            if adj_cpp[l][i].vertex == r:
+                total += adj_cpp[l][i].weight
+                matched = True
+                break
+        
+        # Remove virtual matching
+        if not keeps_virtual_matching and not matched:
+            left_pairs[l] = -1
+            right_pairs[r] = -1
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
@@ -447,17 +446,16 @@ cdef void kwok_double(int L_size, int R_size, list adj, bool keeps_virtual_match
     for l in range(L_size):
         matched = False
         r = left_pairs[l]
-        if r != -1:
-            for i in range(adj_cpp[l].size()):
-                if adj_cpp[l][i].vertex == r:
-                    total += adj_cpp[l][i].weight
-                    matched = True
-                    break
-            
-            # Remove virtual matching
-            if not keeps_virtual_matching and matched:
-                left_pairs[l] = -1
-                right_pairs[r] = -1
+        for i in range(adj_cpp[l].size()):
+            if adj_cpp[l][i].vertex == r:
+                total += adj_cpp[l][i].weight
+                matched = True
+                break
+        
+        # Remove virtual matching
+        if not keeps_virtual_matching and not matched:
+            left_pairs[l] = -1
+            right_pairs[r] = -1
 
 # Python wrapper function
 def kwok(list adj, bool keeps_virtual_matching = True):

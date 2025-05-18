@@ -64,7 +64,7 @@ if os.path.exists("README.md"):
 
 setup(
     name="kwok",
-    version="1.1.6",
+    version="1.1.7",
     author="Shawxing Kwok",
     author_email="shawxingkwok@126.com",
     description="A fast maximum weight bipartite matching algorithm from 'A Faster Algorithm for Maximum Weight Matching on Unrestricted Bipartite Graphs'",
